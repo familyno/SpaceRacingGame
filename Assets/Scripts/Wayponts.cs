@@ -58,8 +58,6 @@ public class Wayponts : NetworkBehaviour
 
     private List<Vector3>[] _ways;
 
-    private DateTime _timeNow = new DateTime();
-
     private void Start()
     {
         _maFile = Resources.Load<TextAsset>(_nameFileWaypoints).ToString();

@@ -9,6 +9,8 @@ public class Menu : MonoBehaviour
 {
     public enum TypeGame { SINGLE, SERVER, HOST, CLIENT }
 
+    [SerializeField] private InputField _addressConnection;
+
     [SerializeField] private Dropdown _resolution;
     [SerializeField] private Dropdown _quality;
     [SerializeField] private Toggle _checkbox;
@@ -21,7 +23,8 @@ public class Menu : MonoBehaviour
     private int _indexResolution;
     private int _indexQuality;
 
-    public static TypeGame GameType { get; set; }
+    public static string Address { get; private set; }
+    public static TypeGame GameType { get; private set; }
 
     private void Start()
     {
@@ -131,6 +134,7 @@ public class Menu : MonoBehaviour
                 break;
             case 3:
                 GameType = TypeGame.CLIENT;
+                Address = _addressConnection.text;
                 break;
             default:
                 GameType = TypeGame.SINGLE;

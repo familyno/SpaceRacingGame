@@ -23,7 +23,7 @@ public class Player : NetworkBehaviour
     int _detectedPoint = 1;
 
     float _offsetY = 0.5f;
-    private float _speed = 0.02f;
+    private float _speed = 0.03f;
     private float _velocity = 0.0001f;
     private float _speedJump = 5f;
     private float _textSpeed = 0.2f;
@@ -58,16 +58,30 @@ public class Player : NetworkBehaviour
         if (isLocalPlayer)
         {
             _camera.SetActive(true);
-            //StartCoroutine(StartFly());
         }
         else
         {
             _camera.SetActive(false);
         }
 
-        _currentCurve = _ccurve;
+        if (NetworkServer.connections.Count > 0)
+        {
+            isLeft = false;
+            isCenter = false;
+            isRight = true;
+            _currentCurve = _rcurve;
+        }
+        else if(NetworkServer.connections.Count > 1)
+        {
+            isLeft = false;
+            isCenter = true;
+            isRight = false;
+            _currentCurve = _ccurve;
+        }
+
         StartCoroutine(StartFly());
     }
+
 
     void Update()
     {
@@ -129,16 +143,16 @@ public class Player : NetworkBehaviour
                     _textSpeed = 0.28f;
                 }
             }
-            else
-            {
-                _speed += _velocity;
-                _textSpeed -= _velocity;
-                if (_speed >= _minSpeed)
-                {
-                    _speed = _minSpeed;
-                    _textSpeed = 0.1f;
-                }
-            }
+            //else
+            //{
+            //    _speed += _velocity;
+            //    _textSpeed -= _velocity;
+            //    if (_speed >= _minSpeed)
+            //    {
+            //        _speed = _minSpeed;
+            //        _textSpeed = 0.1f;
+            //    }
+            //}
             if (Input.GetKey(KeyCode.DownArrow))
             {
                 _speed += _velocity;
@@ -164,7 +178,9 @@ public class Player : NetworkBehaviour
         
         if (isLocalPlayer)
         {
-            player.transform.position = new Vector3(waypoints[_currentPoint][0], waypoints[_currentPoint][1] + _offsetY, waypoints[_currentPoint][2]);
+            Vector3 vec = new Vector3(waypoints[_currentPoint][0], waypoints[_currentPoint][1] + _offsetY, waypoints[_currentPoint][2]);
+            player.transform.position = vec;
+            
             player.transform.LookAt(waypoints[_currentPoint + _detectedPoint]);
 
             _wayponts.SetSpeed(_textSpeed);
@@ -181,8 +197,6 @@ public class Player : NetworkBehaviour
                 if (_currentPoint + _detectedPoint < _currentCurve.Count && !_isGameOver)
                 {
                     MoveOnWaypoints(gameObject, _ccurve);
-
-                    MoveOnWaypoints(_player, _currentCurve);
                     _currentPoint++;
 
                     //Debug.Log(_currentPoint);

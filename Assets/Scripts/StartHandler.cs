@@ -5,6 +5,8 @@ using Mirror;
 
 public class StartHandler : MonoBehaviour
 {
+    private string _address;
+    private string _port;
 
     private NetworkManager _networkManager;
 
@@ -75,6 +77,10 @@ public class StartHandler : MonoBehaviour
         {
             if (Application.platform != RuntimePlatform.WebGLPlayer)
             {
+                _address = Menu.Address;
+
+                _networkManager.networkAddress = _address;
+
                 _networkManager.StartClient();
             }
         }
